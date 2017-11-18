@@ -6,24 +6,21 @@ contract BugBounty is usingOraclize {
     address successClaimant;
     mapping(bytes32=>address) bountyClaimants;
 
-    function BugBounty() payable {
+    function BugBounty() public payable {
         owner = msg.sender;
     }
 
-    function __callback(bytes32 myid, string result) {
+    function __callback(bytes32 myid, string result) public {
         require(msg.sender != oraclize_cbAddress());
-        if (successClaimant) { // already claimed
-            return false;
-        }
-        address claimant = bountyClaimants[myid];
+        require(successClaimant == address(0)); // not already claimed
         if (strCompare(result, "valid") == 0) {
             successClaimant = bountyClaimants[myid];
         }
         delete bountyClaimants[myid];
     }
 
-    function claimBounty(string pocUrl) {
-        if (successClaimant) { // already claimed
+    function claimBounty(string pocUrl) public returns (bool) {
+        if (successClaimant != address(0)) { // already claimed
             return false;
         }
         bytes32 myid = oraclize_query("URL", "json(https://hackme.me/bounty.php).result", pocUrl);
@@ -31,7 +28,7 @@ contract BugBounty is usingOraclize {
     }
 
     // http://solidity.readthedocs.io/en/latest/common-patterns.html#withdrawal-from-contracts
-    function withdraw() {
+    function withdraw() public {
         if (msg.sender == successClaimant || msg.sender == owner) {
             selfdestruct(msg.sender);
         }
