@@ -1,5 +1,5 @@
 pragma solidity ^0.4.0;
-import "oraclizeAPI.sol";
+import "oracalizeAPI.sol";
 
 contract BugBounty is usingOraclize {
     /**
