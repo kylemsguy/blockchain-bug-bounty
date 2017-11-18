@@ -1,0 +1,20 @@
+contract BugBounty {
+    address owner;
+    mapping(bytes32=>address) bountyClaimants;
+    BugBounty() {
+        owner = msg.sender;
+    }
+
+    function __callback(bytes32 myid, string result) {
+        if (msg.sender != oraclize_cbAddress()) throw;
+        address claimant = bountyClaimants[myid];
+        if (result== success) {
+            // send money
+        }
+        delete bountyClaimants[myid];
+    }
+    function claimBounty(string pocUrl) {
+        string outUrl = strConcat(strConcat("json(http://nice.meme/)", pocUrl), ").ishacked");
+        oraclize_query("URL", outUrl);
+    }
+}
