@@ -28,9 +28,7 @@ contract BugBounty is usingOraclize {
     /**
      * Event for logging to the blockchain.
      */
-    event bountyLogEvent(string msg);
-    event bountyClaimSuccessEvent(address successAddress);
-    event bountyClaimFailureEvent(address failureAddress);
+    event bountyLogEvent(address claimAddress, string msg);
 
     function BugBounty(string _bountyVerifierDataSource,
         string _bountyVerifierQuery, string _bountyVerifierFlagResult)
@@ -46,9 +44,9 @@ contract BugBounty is usingOraclize {
         require(successClaimant == address(0)); // not already claimed
         if (strCompare(result, bountyVerifierFlagResult) == 0) {
             successClaimant = bountyClaimants[myid];
-            bountyClaimSuccessEvent(successClaimant);
+            bountyLogEvent(successClaimant, "Successfully claimed bounty");
         } else {
-            bountyClaimFailureEvent(bountyClaimants[myid]);
+            bountyLogEvent(bountyClaimants[myid], "Failed to claim bounty");
         }
         delete bountyClaimants[myid];
     }
@@ -69,12 +67,12 @@ contract BugBounty is usingOraclize {
     // TODO: is the logic for checking bounty price correct?
     function claimBounty(string postData) public payable returns (bool) {
         if (successClaimant != address(0)) { // already claimed
-            bountyLogEvent("Bounty already claimed");
+            bountyLogEvent(msg.sender, "Bounty already claimed");
             return false;
         }
         uint price = oraclize_getPrice(bountyVerifierDataSource);
         if (price > msg.value) {
-            bountyLogEvent("Not enough ether sent with transaction; cannot verify.");
+            bountyLogEvent(msg.sender, "Not enough ether sent with transaction; cannot verify.");
             return false;
         }
         bytes32 myid = oraclize_query(bountyVerifierDataSource, bountyVerifierQuery, postData);
