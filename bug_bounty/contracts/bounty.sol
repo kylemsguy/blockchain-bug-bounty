@@ -1,5 +1,5 @@
 pragma solidity ^0.4.0;
-import "oracalizeAPI.sol";
+import "./oracalizeAPI.sol";
 
 contract BugBounty is usingOraclize {
     /**
@@ -42,7 +42,7 @@ contract BugBounty is usingOraclize {
     }
 
     function __callback(bytes32 myid, string result) public {
-        require(msg.sender != oraclize_cbAddress());
+        require(msg.sender == oraclize_cbAddress());
         require(successClaimant == address(0)); // not already claimed
         if (strCompare(result, bountyVerifierFlagResult) == 0) {
             successClaimant = bountyClaimants[myid];
@@ -93,5 +93,8 @@ contract BugBounty is usingOraclize {
         if (msg.sender == owner && successClaimant == address(0)) {
             selfdestruct(msg.sender);
         }
+    }
+
+    function () public payable {
     }
 }

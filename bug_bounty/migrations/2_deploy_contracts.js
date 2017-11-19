@@ -1,4 +1,4 @@
-var ContractObject = artifacts.require('./BugBounty');
+var ContractObject = artifacts.require('./Sample1BugBounty');
 
 module.exports = function(deployer) {
   deployer.deploy(ContractObject);
