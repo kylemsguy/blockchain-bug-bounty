@@ -135,11 +135,6 @@ async function doSubmit(){
 
     var claimCost = bb.priceForInvokingClaimBounty.call()
 
-    bb.claimBounty.sendTransaction(exploit, {
-        value: claimCost,
-        gas: 6721975
-    });
-
     contractEvent = bb.bountyLogEvent({
         claimAddress: web3.eth.defaultAccount
     });
@@ -156,14 +151,19 @@ async function doSubmit(){
             console.log(result);
             var newBalance = web3.eth.getBalance(web3.eth.defaultAccount);
 
-            $("#status").html(oldmsg + " Old balance: <b>" + web3.fromWei(oldBalance, "ether")
+            $("#status").html(oldmsg + "<br>Old balance: <b>" + web3.fromWei(oldBalance, "ether")
              + "</b> New balance: <b>" + web3.fromWei(newBalance, "ether") + "</b>");
         } else {
             $("#status").attr("class", "alert alert-warning");
         }
         contractEvent.stopWatching();
         contractEvent = null;
-    })
+    });
+
+    bb.claimBounty.sendTransaction(exploit, {
+        value: claimCost,
+        gas: 6721975
+    });
 }
 
 $(function(){
