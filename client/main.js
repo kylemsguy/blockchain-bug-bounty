@@ -113,7 +113,7 @@ const abi_array = [
 
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 var contractEvent = null;
-var forceClaim = true;
+var forceClaim = false;
 
 async function doSubmit(){
     // call web3 and start trying to win
@@ -127,6 +127,8 @@ async function doSubmit(){
     var exploit = $("#exploit").val();
 
     console.log("address:", address);
+
+    var oldBalance = web3.eth.getBalance(web3.eth.defaultAccount);
 
     var BugBounty = web3.eth.contract(abi_array);
     var bb = BugBounty.at(address);
@@ -146,10 +148,17 @@ async function doSubmit(){
         console.log(error, result);
         $("#status").html(result.args.msg);
         if(forceClaim || result.args.msg === "Successfully claimed bounty"){
+            $("#status").attr("class", "alert alert-success");
             var result = bb.withdraw.sendTransaction({
                 gas: 6721975
             });
             console.log(result);
+            var newBalance = web3.eth.getBalance(web3.eth.defaultAccount);
+
+            $("#status").html(result.args.msg + " Old balance: <b>" + web3.fromWei(oldBalance, "ether")
+             + "</b> New balance: <b>" + web3.fromWei(newBalance) + "</b>");
+        } else {
+            $("#status").attr("class", "alert alert-warning");
         }
         contractEvent.stopWatching();
         contractEvent = null;
