@@ -46,7 +46,7 @@ contract BugBounty is usingOraclize {
             successClaimant = bountyClaimants[myid];
             bountyLogEvent(successClaimant, "Successfully claimed bounty");
         } else {
-            bountyLogEvent(bountyClaimants[myid], "Failed to claim bounty");
+            bountyLogEvent(bountyClaimants[myid], result);//"Failed to claim bounty"
         }
         delete bountyClaimants[myid];
     }
