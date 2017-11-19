@@ -1,0 +1,3 @@
+[submodule "sploitable-server"]
+	path = sploitable-server
+	url = git@github.com:kylemsguy/sploitable-server.git
