@@ -25,6 +25,13 @@ contract BugBounty is usingOraclize {
      */
     mapping(bytes32=>address) bountyClaimants;
 
+    /**
+     * Event for logging to the blockchain.
+     */
+    event bountyLogEvent(string msg);
+    event bountyClaimSuccessEvent(address successAddress);
+    event bountyClaimFailureEvent(address failureAddress);
+
     function BugBounty(string _bountyVerifierDataSource,
         string _bountyVerifierQuery, string _bountyVerifierFlagResult)
         public payable {
@@ -39,8 +46,19 @@ contract BugBounty is usingOraclize {
         require(successClaimant == address(0)); // not already claimed
         if (strCompare(result, bountyVerifierFlagResult) == 0) {
             successClaimant = bountyClaimants[myid];
+            bountyClaimSuccessEvent(successClaimant);
+        } else {
+            bountyClaimFailureEvent(bountyClaimants[myid]);
         }
         delete bountyClaimants[myid];
+    }
+
+    /**
+     * Calculate min amount of value one needs to attach to the claimBounty
+     * function.
+     */
+    function priceForInvokingClaimBounty() public returns (uint) {
+        return oraclize_getPrice(bountyVerifierDataSource);
     }
 
     /**
@@ -48,11 +66,15 @@ contract BugBounty is usingOraclize {
      * a vulnerability.
      * @param postData the data that triggers the bug: for webpages, this is POST data.
      */
-    // TODO: make the person calling this function pay for the query and callback.
-    // since right now someone can just keep calling this with bogus data to
-    // drain the bounty.
-    function claimBounty(string postData) public returns (bool) {
+    // TODO: is the logic for checking bounty price correct?
+    function claimBounty(string postData) public payable returns (bool) {
         if (successClaimant != address(0)) { // already claimed
+            bountyLogEvent("Bounty already claimed");
+            return false;
+        }
+        uint price = oraclize_getPrice(bountyVerifierDataSource);
+        if (price > msg.value) {
+            bountyLogEvent("Not enough ether sent with transaction; cannot verify.");
             return false;
         }
         bytes32 myid = oraclize_query(bountyVerifierDataSource, bountyVerifierQuery, postData);
