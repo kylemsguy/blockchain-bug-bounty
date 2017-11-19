@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script language="javascript" src="jquery-3.2.1.min.js"></script>
+    <script language="javascript" src="web3.js"></script>
+    <script language="javascript" src="main.js"></script>
+</head>
+<body>
+    <!-- bounty address, text area for exploit (json), submit & use web3 to detect whether bounty received -->
+    <!-- when submit, monitor for events (use wait to wait for async request) -->
+
+    <form id="sendForm">
+        <label for="bountyAddr">Bounty Address: </label><br>
+        <input type="text" id="bountyAddr" maxlength="66" size="80" value="0x5362b90b77e0fb46d7bb2eb5c8769fb849ff6bcf"><br><br>
+        <label for="shellCode">Exploit: </label><br>
+        <textarea rows="25" cols="80" id="exploit">{}</textarea><br>
+        <input type="submit" id="submitBtn">
+    </form>
+    <br>
+    <div id="status">Ready</div>
+</body>
+</html>
