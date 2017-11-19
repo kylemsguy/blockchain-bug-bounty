@@ -148,6 +148,7 @@ async function doSubmit(){
         console.log(error, result);
         $("#status").html(result.args.msg);
         if(forceClaim || result.args.msg === "Successfully claimed bounty"){
+            var oldmsg = result.args.msg;
             $("#status").attr("class", "alert alert-success");
             var result = bb.withdraw.sendTransaction({
                 gas: 6721975
@@ -155,8 +156,8 @@ async function doSubmit(){
             console.log(result);
             var newBalance = web3.eth.getBalance(web3.eth.defaultAccount);
 
-            $("#status").html(result.args.msg + " Old balance: <b>" + web3.fromWei(oldBalance, "ether")
-             + "</b> New balance: <b>" + web3.fromWei(newBalance) + "</b>");
+            $("#status").html(oldmsg + " Old balance: <b>" + web3.fromWei(oldBalance, "ether")
+             + "</b> New balance: <b>" + web3.fromWei(newBalance, "ether") + "</b>");
         } else {
             $("#status").attr("class", "alert alert-warning");
         }
@@ -171,3 +172,13 @@ $(function(){
         return false;
     });
 });
+
+function addToBounty() {
+    var address = $("#bountyAddr").val();
+    var result = web3.eth.sendTransaction({
+        from: web3.eth.coinbase,
+        to: address,
+        value: web3.toWei(5, "ether")
+    });
+    console.log(result);
+}

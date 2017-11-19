@@ -9,7 +9,8 @@
 </head>
 <body>
 <div class="container">
-<div class="col-8 offset-2">
+<div class="row">
+<div class="col-8 offset-1">
     <!-- bounty address, text area for exploit (json), submit & use web3 to detect whether bounty received -->
     <!-- when submit, monitor for events (use wait to wait for async request) -->
     <form id="sendForm">
@@ -23,6 +24,11 @@
     </form>
     <br>
     <div id="status" class="alert alert-info">Ready</div>
+</div>
+<div class="col-2" style="border-radius:.25em; background-color: #eee">
+    <div>Admin</div>
+    <button class="btn btn-secondary" style="width:100%" onclick="addToBounty()">Add ETH</button>
+</div>
 </div>
 </div>
 </body>
